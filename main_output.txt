@@ -1,0 +1,70 @@
+
+
+event_whenflagclicked()
+data_setvariableto[noOfJumps](0)
+looks_setsizeto(50)
+motion_pointindirection(90)
+control_repeat_until(operator_equals(looks_size(), 100)){
+	looks_changesizeby(10)
+	control_wait(0.2)
+}
+
+event_whenkeypressed[left arrow]()
+control_if(operator_equals(motion_direction(), 90)){
+	control_repeat_until(operator_equals(motion_direction(), -90)){
+		motion_turnright(45)
+		control_wait(0.1)
+	}
+}
+motion_movesteps(10)
+
+event_whenkeypressed[right arrow]()
+control_if(operator_equals(motion_direction(), -90)){
+	control_repeat_until(operator_equals(motion_direction(), 90)){
+		motion_turnright(45)
+		control_wait(0.1)
+	}
+}
+motion_movesteps(10)
+
+event_whenbroadcastreceived[jumpjump]()
+control_if_else(operator_lt(noOfJumps, 3)){
+	data_changevariableby[noOfJumps](1)
+	control_repeat(2){
+		motion_changeyby(20)
+		control_wait(0.02)
+	}
+	control_repeat(2){
+		motion_changeyby(10)
+		control_wait(0.02)
+	}
+	control_wait(0.01)
+	control_repeat(2){
+		motion_changeyby(-10)
+		control_wait(0.02)
+	}
+	control_repeat(2){
+		motion_changeyby(-20)
+		control_wait(0.02)
+	}
+	event_broadcast(None)
+}{
+	looks_sayforsecs(Im tired, 1)
+	data_setvariableto[noOfJumps](0)
+}
+
+event_whenthisspriteclicked()
+event_broadcast(None)
+
+event_whenbroadcastreceived[jumpjump]()
+looks_setsizeto(120)
+looks_switchcostumeto(looks_costume[button2-b]())
+control_wait(0.1)
+looks_setsizeto(100)
+looks_switchcostumeto(looks_costume[button2-a]())
+
+event_whenbroadcastreceived[land]()
+motion_turnright(10)
+control_wait(0.03)
+motion_turnleft(10)
+control_wait(0.03)
