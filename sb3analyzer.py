@@ -7,6 +7,11 @@ from sb3helper.sb3helper import *
 import copy
 #import ast
 
+
+blockList_unreachable = []
+
+
+
 def delimit():
     pr("\\")
 
@@ -21,7 +26,10 @@ class SB3Analyzer:
 
         
         # print
-        self.traversal_functCall(project, self.travPrint)
+        # self.traversal_functCall(project, self.travPrint)
+
+        # get unreachable
+        # self.createUnreachableList(project)
 
     def traversal_functCall(self, project, L_funct):
         targetList = project.getTargetList()
@@ -29,8 +37,8 @@ class SB3Analyzer:
         for target in targetList:
             for block in target.get_blockList():
                 if block.isTopLevel():
-                    self.travPrint([0, [99,"\n"], target]) # print newline
-                    self.travPrint([0, [99,"\n"], target]) # print newline
+                    L_funct([0, [99,"\n"], target]) # print newline
+                    L_funct([0, [99,"\n"], target]) # print newline
                     self.traverse(0, [0, block.get_idx()], target, L_funct)
 
     def printBlockList(self, project):
@@ -136,3 +144,21 @@ class SB3Analyzer:
                     pr(str(listValArr[0][0])) ## CHECK
             else:
                 pr(str(type_val))
+
+
+
+
+    def createUnreachableList(self, project):
+        targetList = project.getTargetList()
+        for target in targetList:
+            for block in target.get_blockList():
+                blockList_unreachable.append(block.get_idx()) # assume not reachable, remove if reachable
+        self.traversal_functCall(project, self.removeReachable)
+        
+    def removeReachable(self, inputArr):
+        type_val = inputArr[1]
+        target = inputArr[2]
+        
+        if type_val[0] == 0:
+            block = target.getBlock_byId(type_val[1])
+            blockList_unreachable.remove(block.get_idx())
