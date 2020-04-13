@@ -9,6 +9,7 @@ import copy
 
 
 blockList_unreachable = []
+headOpcodeList = ['event_whenflagclicked','event_whenkeypressed','event_whenthisspriteclicked','event_whenbackdropswitchesto','event_whengreaterthan','event_whenbroadcastreceived']
 
 
 
@@ -17,47 +18,62 @@ def delimit():
 
 class SB3Analyzer:
     def __init__(self, analysisMode, project):
-        if analysisMode == 0: #do all analysis
-            pass
-        else:
-            pass
+
+        # future analysis configuration to mux assessments to execute
+        # if analysisMode == 0: #do all analysis
+        #     pass
+        # else:
+        #     pass
 
         
+        ### A
+        # print block list
+        #self.printBlockList(project)
 
-        
-        # print
+
+        ### B
+        # print indented
         # self.traversal_functCall(project, self.travPrint)
 
-        # get unreachable
+
+        ### C
+        # create and get unreachable
         # self.createUnreachableList(project)
+        # if blockList_unreachable:
+        #     print("unreachable blocks:")
+        #     targetList = project.getTargetList()
+        #     for target in targetList:
+        #         for block in target.get_blockList():
+        #             if block.get_idx() in blockList_unreachable:
+        #                 print(str(block.get_idx()) + " : " + str(block.get_opcode()))
+
+
+        ### D
+        # get list of blocks matching opcode list
+        # matchBlkList = self.getBlockList_matchOpcodeList(project, ["control_if", "control_if_else"])
+        # if matchBlkList:
+        #     print("matched blocks:")
+        #     targetList = project.getTargetList()
+        #     for target in targetList:
+        #         for block in target.get_blockList():
+        #             if block.get_idx() in matchBlkList:
+        #                 print(str(block.get_idx()) + " : " + str(block.get_opcode()))
+        # Reference from Dr Scratch
+        # based on matching code can give a score
+
+
+
+
 
     def traversal_functCall(self, project, L_funct):
         targetList = project.getTargetList()
 
         for target in targetList:
             for block in target.get_blockList():
-                if block.isTopLevel():
+                if block.isTopLevel() and block.get_opcode() in headOpcodeList:
                     L_funct([0, [99,"\n"], target]) # print newline
                     L_funct([0, [99,"\n"], target]) # print newline
                     self.traverse(0, [0, block.get_idx()], target, L_funct)
-
-    def printBlockList(self, project):
-        targetList = project.getTargetList()
-
-        for target in targetList:
-            for block in target.get_blockList():
-                pr(target.get_name())
-                delimit()
-                pr(block.get_idx())
-                delimit()
-                pr(block.isTopLevel())
-                delimit()
-                pr(block.get_opcode())
-                delimit()
-                pr(block.get_blockFieldDict())
-                delimit()
-                pr(block.get_blockInputDict())
-                pr("\n")
 
     def traverse(self, indent, type_val, target, L_funct): # checks if is block or others
         if (type_val[0] == 0): #block
@@ -116,6 +132,12 @@ class SB3Analyzer:
         
         L_funct([0, [99,""], target]) # end
 
+
+
+
+
+
+
     def travPrint(self, inputArr):
         indent = inputArr[0]
         type_val = inputArr[1]
@@ -133,7 +155,7 @@ class SB3Analyzer:
             elif(type_val[0] == 11):
                 if(sb3target.containsBroadcast_byId(type_val[1])):
                     broadcastValArr = sb3target.getBroadcastArr_byId(type_val[1])
-                    pr(str(broadcastValArr[1]))
+                    pr(str(broadcastValArr[0]))
             elif(type_val[0] == 12):
                 if(sb3target.containsVariable_byId(type_val[1])):
                     varValArr = sb3target.getVariableArr_byId(type_val[1])
@@ -141,9 +163,11 @@ class SB3Analyzer:
             elif(type_val[0] == 13):
                 if(sb3target.containsList_byId(type_val[1])):
                     listValArr = sb3target.getListArr_byId(type_val[1])
-                    pr(str(listValArr[0][0])) ## CHECK
+                    pr(str(listValArr[0][0]))
             else:
                 pr(str(type_val))
+
+
 
 
 
@@ -153,6 +177,7 @@ class SB3Analyzer:
         for target in targetList:
             for block in target.get_blockList():
                 blockList_unreachable.append(block.get_idx()) # assume not reachable, remove if reachable
+        #print(blockList_unreachable)
         self.traversal_functCall(project, self.removeReachable)
         
     def removeReachable(self, inputArr):
@@ -160,5 +185,47 @@ class SB3Analyzer:
         target = inputArr[2]
         
         if type_val[0] == 0:
+            #print(type_val)
             block = target.getBlock_byId(type_val[1])
             blockList_unreachable.remove(block.get_idx())
+
+
+
+
+
+
+
+
+    def printBlockList(self, project):
+        targetList = project.getTargetList()
+
+        for target in targetList:
+            for block in target.get_blockList():
+                pr(target.get_name())
+                delimit()
+                pr(block.get_idx())
+                delimit()
+                pr(block.isTopLevel())
+                delimit()
+                pr(block.get_opcode())
+                delimit()
+                pr(block.get_blockFieldDict())
+                delimit()
+                pr(block.get_blockInputDict())
+                pr("\n")
+
+    
+    
+    def getBlockList_matchOpcodeList(self, project, opcodeList):
+        targetList = project.getTargetList()
+
+        self.createUnreachableList(project)
+
+        blockIdx_ofOpcodeMatch = []
+
+        for target in targetList:
+            for block in target.get_blockList():
+                if block.get_opcode() in opcodeList:
+                    if block.get_idx() not in blockList_unreachable:
+                        blockIdx_ofOpcodeMatch.append(block.get_idx())
+        return blockIdx_ofOpcodeMatch
