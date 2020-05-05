@@ -12,6 +12,7 @@ import os
 cwd = os.path.abspath(os.getcwd())
 sb3filepath = cwd + "\\CatJumpJump.sb3"
 #sb3filepath = cwd + "\\tmpUnreachableCode.sb3"
+#sb3filepath = cwd + "\\tmpUnreachableCode2.sb3"
 
 
 # Configuration
@@ -29,4 +30,3 @@ Project = sb3initializer.initializeProject(projectJsonString)
 
 Analyzer = sb3analyzer.SB3Analyzer(analysisMode, Project)
 
-#Analyzer.printSummary()

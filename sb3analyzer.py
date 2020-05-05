@@ -19,6 +19,7 @@ def delimit():
 class SB3Analyzer:
     def __init__(self, analysisMode, project):
 
+
         # future analysis configuration to mux assessments to execute
         # if analysisMode == 0: #do all analysis
         #     pass
@@ -26,19 +27,19 @@ class SB3Analyzer:
         #     pass
 
         
-        ### A
-        # print block list
+        ### A - Example  on Printing Block List Detail Summary
+        ## print block list
         #self.printBlockList(project)
 
+        ### B - Example on converting reachable code into indented textual representation 
+        ## print indented
+        self.traversal_functCall(project, self.travPrint)
 
-        ### B
-        # print indented
-        # self.traversal_functCall(project, self.travPrint)
 
-
-        ### C
-        # create and get unreachable
+        ### C - Example on getting list of unreachable blocks
+        ## create list of index of unreachable block and print it out
         # self.createUnreachableList(project)
+        # print(blockList_unreachable)
         # if blockList_unreachable:
         #     print("unreachable blocks:")
         #     targetList = project.getTargetList()
@@ -48,8 +49,11 @@ class SB3Analyzer:
         #                 print(str(block.get_idx()) + " : " + str(block.get_opcode()))
 
 
-        ### D
-        # get list of blocks matching opcode list
+
+        ### D - Example  on getting a list of reachable blocks matching opcode list ["control_if", "control_if_else"]
+        ## get list of reachable blocks matching opcode list
+        ## Reference from Dr Scratch
+        ## based on matching code can give a score
         # matchBlkList = self.getBlockList_matchOpcodeList(project, ["control_if", "control_if_else"])
         # if matchBlkList:
         #     print("matched blocks:")
@@ -58,9 +62,6 @@ class SB3Analyzer:
         #         for block in target.get_blockList():
         #             if block.get_idx() in matchBlkList:
         #                 print(str(block.get_idx()) + " : " + str(block.get_opcode()))
-        # Reference from Dr Scratch
-        # based on matching code can give a score
-
 
 
 
